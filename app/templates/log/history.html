@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if request.args.get("delete") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert"
+  style="display:block">Logu başarıyla sildiniz.</span>
+{% endif %}
+{% if request.args.get("unescale") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert"
+  style="display:block">Logu başarıyla unescale ettiniz.</span>
+{% endif %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col" style="max-width:50px;">ID</th>
+      <th scope="col" style="width:600px;">Denenen Komut</th>
+      <th scope="col" style="max-width:150px;">IP:Port</th>
+      <th scope="col" style="max-width:150px;">Timestamp</th>
+      <th scope="col" style="max-width:150px;">Log Level</th>
+      <th scope="col">Kaynak</th>
+      <th scope="col" style="max-width:200px;">İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.id }}</td>
+      <td>{{ log.command }}</td>
+      <td>{{ log.ip_port }}</td>
+      <td>{{ log.timestand }}</td>
+      <td><b>{% for i in range(log.level) %}✯{% endfor %}</b></td>
+      <td>{{ log.source }}</td>
+      <td>
+        
+        <div class="d-flex">
+          {% if log.user_viewable == False %}
+          <form action="/log/{{ log.id }}/escale" method="post">
+            <button class="btn btn-primary mr-2" data-toggle="tooltip"
+              data-placement="bottom" title="Logu Bekleyenlere Geri Taşı">
+              <i class="fas fa-eye"></i>
+            </button>
+          </form>
+          {% else %}
+          <button class="btn btn-primary mr-2" data-toggle="tooltip" disabled
+              data-placement="bottom" title="Logu Bekleyenlere Geri Taşı">
+              <i class="fas fa-eye"></i>
+          </button>
+          {% endif %}
+
+          <form action="/log/{{ log.id }}/delete" method="post">
+            <button class="btn btn-danger mr-2" data-toggle="tooltip"
+              data-placement="bottom" title="Logu Sil">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+
+        </div>
+
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
