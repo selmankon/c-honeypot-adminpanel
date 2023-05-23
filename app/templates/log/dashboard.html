@@ -2,15 +2,14 @@
 
 {% block content %}
 {% if request.args.get("delete") == "true" %}
-<span id="error-message" class="alert alert-success" role="alert"
-  style="display:block">Logu başarıyla sildiniz.</span>
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Logu başarıyla sildiniz.</span>
 {% elif request.args.get("delete") == "false" %}
-<span id="error-message" class="alert alert-danger" role="alert"
-style="display:block">Logları sadece adminler silebilir.</span>
+<span id="error-message" class="alert alert-danger" role="alert" style="display:block">Logları sadece adminler
+  silebilir.</span>
 {% endif %}
 {% if request.args.get("escale") == "true" %}
-<span id="error-message" class="alert alert-success" role="alert"
-  style="display:block">Logu başarıyla escale ettiniz.</span>
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Logu başarıyla escale
+  ettiniz.</span>
 {% endif %}
 <table class="table table-bordered">
   <thead>
@@ -36,8 +35,7 @@ style="display:block">Logları sadece adminler silebilir.</span>
       <td>
         <div class="d-flex">
           <form action="/log/{{ log.id }}/escale" method="post">
-            <button class="btn btn-primary mr-2" data-toggle="tooltip"
-              data-placement="bottom" title="Logu Escale Et">
+            <button class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="bottom" title="Logu Escale Et">
               <i class="fas fa-eye"></i>
             </button>
           </form>

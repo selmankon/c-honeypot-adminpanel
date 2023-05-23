@@ -1,20 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if  request.args.get("delete") == "true" %}
-  <span id="error-message" class="alert alert-success" role="alert"
-    style="display:block">Kullanıcıyı başarıyla sildiniz.</span>
-  {% endif %}
-  {% if request.args.get("changerole") == "true" %}
-  <span id="error-message" class="alert alert-success" role="alert"
-    style="display:block">Kullanıcının rolünü değiştirdiniz.</span>
-  {% endif %}
-  {% if request.args.get("create") == "true" %}
-  <span id="error-message" class="alert alert-info" role="alert"
-    style="display:block">Yeni kullanıcı eklediniz.</span>
-  {% endif %}
+{% if request.args.get("delete") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Kullanıcıyı başarıyla
+  sildiniz.</span>
+{% endif %}
+{% if request.args.get("changerole") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Kullanıcının rolünü
+  değiştirdiniz.</span>
+{% endif %}
+{% if request.args.get("create") == "true" %}
+<span id="error-message" class="alert alert-info" role="alert" style="display:block">Yeni kullanıcı eklediniz.</span>
+{% endif %}
 <div class="row">
-  
+
   <div class="col-8">
     <div class="card">
       <div class="card-header text-center">
@@ -41,16 +40,16 @@
               <td style="width: 110px;">
                 <div class="d-flex">
                   <form action="/user/{{ user.id }}/delete" method="post">
-                    <button class="btn btn-danger mr-2" data-toggle="tooltip"
-                      data-placement="bottom" title="Kullanıcıyı Sil">
+                    <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom"
+                      title="Kullanıcıyı Sil">
                       <i class="fas fa-trash"></i>
                     </button>
                   </form>
 
 
                   <form action="/user/{{ user.id }}/change_role" method="post">
-                    <button class="btn btn-success mr-2" data-toggle="tooltip"
-                      data-placement="bottom" title="Rolünü Değiştir">
+                    <button class="btn btn-success mr-2" data-toggle="tooltip" data-placement="bottom"
+                      title="Rolünü Değiştir">
                       <i class="fas {{ 'fa-download' if user.role == 'admin'
                         else 'fa-upload' if user.role == 'user' else '' }}"></i>
                     </button>
@@ -71,18 +70,15 @@
         <i class="fas fa-user"></i> Kullanıcı Ekle
       </div>
       <div class="card-body">
-        <form method="POST" action="/user/create"
-          class="needs-validation" novalidate>
+        <form method="POST" action="/user/create" class="needs-validation" novalidate>
           <div class="form-group">
             <label for="username">Kullanıcı Adı:</label>
-            <input type="text" class="form-control" id="username"
-              name="username" required>
+            <input type="text" class="form-control" id="username" name="username" required>
           </div>
 
           <div class="form-group">
             <label for="password">Şifre:</label>
-            <input type="password" class="form-control" id="password"
-              name="password" required>
+            <input type="password" class="form-control" id="password" name="password" required>
           </div>
 
           <div class="form-group">
