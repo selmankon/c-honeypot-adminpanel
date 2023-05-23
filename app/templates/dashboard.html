@@ -3,7 +3,9 @@
 {% block content %}
 <div class="card">
   <div class="card-header text-center">
-    <h5 class="card-title mb-0">Hoşgeldiniz {{session['username'] }}</h5>
+    <h5 class="card-title mb-0">
+      Hoşgeldiniz {{session['username'] }}
+    </h5>
   </div>
   <div class="card-body text-center">
 
@@ -13,7 +15,7 @@
         <div class="col">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-user"></i> Kullanıcı Yönetimi</h5>
+              <h5 class="card-title"><i class="fa fa-users"></i> Kullanıcı Yönetimi</h5>
               <p class="card-text">Kullanıcı Sayısı: {{users_count}}</p>
               <a href="users" class="btn btn-primary">Görüntüle</a>
             </div>
@@ -22,7 +24,7 @@
         <div class="col">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-search"></i> Log Geçmişi</h5>
+              <h5 class="card-title"><i class="fa fa-history"></i> Log Geçmişi</h5>
               <p class="card-text">Toplam Log Sayısı: {{total_log_count}} </p>
               <a href="/log/history" class="btn btn-primary">Görüntüle</a>
             </div>
