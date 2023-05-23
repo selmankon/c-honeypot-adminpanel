@@ -1,34 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if  request.args.get("delete") == "true" %}
-  <span id="error-message" class="alert alert-success" role="alert"
-    style="display:block">Kullanıcıyı başarıyla sildiniz.</span>
-  {% endif %}
-  {% if request.args.get("changerole") == "true" %}
-  <span id="error-message" class="alert alert-success" role="alert"
-    style="display:block">Kullanıcının rolünü değiştirdiniz.</span>
-  {% endif %}
-  {% if request.args.get("create") == "true" %}
-  <span id="error-message" class="alert alert-info" role="alert"
-    style="display:block">Yeni kullanıcı eklediniz.</span>
-  {% endif %}
+{% if request.args.get("delete") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Kullanıcıyı başarıyla
+  sildiniz.</span>
+{% endif %}
+{% if request.args.get("changerole") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Kullanıcının rolünü
+  değiştirdiniz.</span>
+{% endif %}
+{% if request.args.get("create") == "true" %}
+<span id="error-message" class="alert alert-info" role="alert" style="display:block">Yeni kullanıcı eklediniz.</span>
+{% endif %}
 <div class="row">
-  
   <div class="col-8">
-    <div class="card">
+    <div class="card text-white border-light bg-dark">
       <div class="card-header text-center">
-        <i class="fas fa-user"></i> Kullanıcı Yönetimi
+        <h5 class="text-center">
+          <i class="fa fa-users"></i> Kullanıcı Yönetimi
+        </h5>
       </div>
       <div class="card-body">
-        <table class="table table-bordered">
-
-
+        <table class="table table-bordered text-white">
           <thead>
             <tr>
               <th scope="col" style="width: 5px;">ID</th>
               <th scope="col" style="width: 60px;">Kullanıcı Adı</th>
-              <th scope="col" style="width: 60px;">Rolü</th>
+              <th scope="col" style="width: 60px;">Rol</th>
               <th scope="col" style="width: 110px;">İşlem</th>
             </tr>
           </thead>
@@ -41,22 +39,19 @@
               <td style="width: 110px;">
                 <div class="d-flex">
                   <form action="/user/{{ user.id }}/delete" method="post">
-                    <button class="btn btn-danger mr-2" data-toggle="tooltip"
-                      data-placement="bottom" title="Kullanıcıyı Sil">
+                    <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom"
+                      title="Kullanıcıyı Sil">
                       <i class="fas fa-trash"></i>
                     </button>
                   </form>
-
-
                   <form action="/user/{{ user.id }}/change_role" method="post">
-                    <button class="btn btn-success mr-2" data-toggle="tooltip"
-                      data-placement="bottom" title="Rolünü Değiştir">
+                    <button class="btn btn-success mr-2" data-toggle="tooltip" data-placement="bottom"
+                      title="Rolünü Değiştir">
                       <i class="fas {{ 'fa-download' if user.role == 'admin'
                         else 'fa-upload' if user.role == 'user' else '' }}"></i>
                     </button>
                   </form>
                 </div>
-
               </td>
             </tr>
             {% endfor %}
@@ -66,36 +61,33 @@
     </div>
   </div>
   <div class="col-4">
-    <div class="card">
+    <div class="card text-white border-light bg-dark">
       <div class="card-header text-center">
-        <i class="fas fa-user"></i> Kullanıcı Ekle
+        <h5 class="text-center">
+          <i class="fa fa-user-plus"></i> Kullanıcı Ekle
+        </h5>
       </div>
       <div class="card-body">
-        <form method="POST" action="/user/create"
-          class="needs-validation" novalidate>
+        <form method="POST" action="/user/create" class="needs-validation" novalidate>
           <div class="form-group">
-            <label for="username">Kullanıcı Adı:</label>
-            <input type="text" class="form-control" id="username"
-              name="username" required>
+            <label for="username">Kullanıcı Adı</label>
+            <input type="text" class="form-control text-white bg-dark" id="username" name="username" required>
           </div>
-
           <div class="form-group">
-            <label for="password">Şifre:</label>
-            <input type="password" class="form-control" id="password"
-              name="password" required>
+            <label for="password">Şifre</label>
+            <input type="password" class="form-control text-white bg-dark" id="password" name="password" required>
           </div>
-
           <div class="form-group">
-            <label for="role">Rol:</label>
-            <select class="form-control" id="role" name="role">
+            <label for="role">Rol</label>
+            <select class="form-control text-white bg-transparent" id="role" name="role">
               <option value="user">user</option>
               <option value="admin">admin</option>
             </select>
           </div>
-
           <button type="submit" class="btn btn-primary">Kaydet</button>
         </form>
       </div>
     </div>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}

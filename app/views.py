@@ -23,6 +23,7 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+
 def login_required(func):
     @wraps(func)
     def decorated_view(*args, **kwargs):
@@ -46,15 +47,16 @@ def Defination():
 def Login():
     if 'username' in session:
         return redirect("/dashboard")
-        
+
     error = request.args.get("error")
     logout = request.args.get("logout")
     if error:
         return render_template('account/login.html', error=True, logout=False)
     elif logout:
-        return render_template('account/login.html', error=False ,logout=True)
+        return render_template('account/login.html', error=False, logout=True)
     else:
         return render_template('account/login.html', error=False, logout=False)
+
 
 @app.route("/dashboard", methods=['GET'])
 @login_required
@@ -62,8 +64,8 @@ def dashboard():
     role = session['role']
     users_count = db.session.query(User).count()
     total_log_count = db.session.query(Log).count()
-    current_log_count = db.session.query(Log).filter(Log.user_viewable == True).count()
-
+    current_log_count = db.session.query(Log).filter(
+        Log.user_viewable == True).count()
 
     return render_template('dashboard.html', role=role, users_count=users_count, total_log_count=total_log_count, current_log_count=current_log_count)
 
@@ -80,17 +82,21 @@ class Log(db.Model):
     source = db.Column(db.String, nullable=False)
     user_viewable = db.Column(db.Boolean, nullable=False)
 
+
 @app.route("/log/dashboard", methods=['GET'])
 @login_required
 def log_dashboard():
-    logs = db.session.query(Log).filter(Log.user_viewable == True).order_by(Log.timestand)
+    logs = db.session.query(Log).filter(
+        Log.user_viewable == True).order_by(Log.timestand)
     return render_template('log/dashboard.html', logs=logs)
+
 
 @app.route("/log/history", methods=['GET'])
 @admin_required
 def log_history():
     logs = db.session.query(Log).order_by(Log.timestand)
     return render_template('log/history.html', logs=logs)
+
 
 @app.route("/log/<int:id>/delete", methods=["POST"])
 @admin_required
@@ -100,19 +106,21 @@ def log_delete(id):
     db.session.commit()
     return redirect("/log/history?delete=true")
 
+
 @app.route("/log/create", methods=["POST"])
 def log_create():
     log = Log(
-        command = 'ping 127.0.0.1',
-        ip_port = '172.3.12.66:15812',
-        timestand = datetime.now(),
-        level = 3,
-        source = 'Telnet',
-        user_viewable = True
+        command='ping 127.0.0.1',
+        ip_port='172.3.12.66:15812',
+        timestand=datetime.now(),
+        level=3,
+        source='Telnet',
+        user_viewable=True
     )
-    
+
     db.session.add(log)
     db.session.commit()
+
 
 @app.route("/log/<int:id>/escale", methods=["POST"])
 @login_required
@@ -134,15 +142,18 @@ def log_escale(id):
 
 # --------- Session Management --------- #
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/login?logout=true')
 
+
 @app.route('/settings')
 @login_required
 def settings():
     return render_template('account/settings.html', success=request.args.get("success"))
+
 
 @app.route("/submit", methods=['POST'])
 def Submit():
@@ -150,7 +161,8 @@ def Submit():
     username = request.form['username']
     password = sha256(request.form['password'].encode()).hexdigest()
 
-    user = db.session.query(User).filter(User.username == username).order_by(User.username).first()
+    user = db.session.query(User).filter(
+        User.username == username).order_by(User.username).first()
 
     if user and user.password == password:
         session['id'] = user.id
@@ -159,7 +171,6 @@ def Submit():
         return redirect("/dashboard")
     else:
         return redirect("/login?error=true")
-
 
 
 # ------------------ User ------------------ #
@@ -172,19 +183,19 @@ class User(db.Model):
     role = db.Column(db.String, nullable=False)
 
 
-
 @app.route("/user/create", methods=["POST"])
 @admin_required
 def user_create():
     user = User(
-        username = request.form["username"],
-        password = sha256(request.form["password"].encode()).hexdigest(),
-        role     = request.form["role"],
+        username=request.form["username"],
+        password=sha256(request.form["password"].encode()).hexdigest(),
+        role=request.form["role"],
     )
-    
+
     db.session.add(user)
     db.session.commit()
     return redirect('/users?create=true')
+
 
 @app.route("/user/<int:id>/delete", methods=["POST"])
 @admin_required
@@ -193,6 +204,7 @@ def user_delete(id):
     db.session.delete(user)
     db.session.commit()
     return redirect("/users?delete=true")
+
 
 @app.route("/user/change_password", methods=["POST"])
 @login_required
@@ -205,7 +217,8 @@ def change_password():
     if not (request.form["new-password"] == request.form["confirm-password"]):
         return redirect("/settings?success=false")
 
-    user.password = sha256(request.form["confirm-password"].encode()).hexdigest()
+    user.password = sha256(
+        request.form["confirm-password"].encode()).hexdigest()
 
     db.session.commit()
     return redirect("/settings?success=true")
@@ -225,4 +238,3 @@ def change_role(id):
 def users():
     users = db.session.execute(db.select(User).order_by(User.role)).scalars()
     return render_template('user/list.html', users=users)
-

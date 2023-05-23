@@ -1,28 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card">
+<div class="card text-white border-light bg-dark">
   <div class="card-header text-center">
-    <h5 class="card-title mb-0">Hoşgeldiniz {{session['username'] }}</h5>
+    <h5 class="card-title mb-0">
+      Hoşgeldiniz {{session['username'] }}
+    </h5>
   </div>
-  <div class="card-body text-center">
-    
   <div class="card-body text-center">
     <div class="row">
       {% if session['role'] == 'admin' %}
       <div class="col">
-        <div class="card">
+        <div class="card text-white border-light bg-dark">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-user"></i> Kullanıcı Yönetimi</h5>
+            <h5 class="card-header border-light mb-4"><i class="fa fa-users"></i> Kullanıcı Yönetimi</h5>
             <p class="card-text">Kullanıcı Sayısı: {{users_count}}</p>
             <a href="users" class="btn btn-primary">Görüntüle</a>
           </div>
         </div>
       </div>
       <div class="col">
-        <div class="card">
+        <div class="card text-white border-light bg-dark">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-search"></i> Log Geçmişi</h5>
+            <h5 class="card-header border-light mb-4"><i class="fa fa-history"></i> Log Geçmişi</h5>
             <p class="card-text">Toplam Log Sayısı: {{total_log_count}} </p>
             <a href="/log/history" class="btn btn-primary">Görüntüle</a>
           </div>
@@ -30,9 +30,9 @@
       </div>
       {% endif %}
       <div class="col">
-        <div class="card">
+        <div class="card text-white border-light bg-dark">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-search"></i> Log Paneli</h5>
+            <h5 class="card-header border-light mb-4"><i class="fas fa-search"></i> Log Paneli</h5>
             <p class="card-text">Bekleyen Log Sayısı: {{current_log_count}}</p>
             <a href="/log/dashboard" class="btn btn-primary">Görüntüle</a>
           </div>
@@ -41,5 +41,4 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
