@@ -1,6 +1,10 @@
 # caveman honeypot admin panel
 
-default admin acc -> letmetest:123
+db account
+
+- letmetest:123
+- admin:123
+- user:123
 
 [c-honeypot](https://github.com/selmankon/c-honeypot) is the honeypot for this admin panel
 
