@@ -1,0 +1,49 @@
+{% block content %}
+<div class="container mb-4">
+    <div class="row">
+        <div class="col">
+            <h3 class="text-center">Saldırgan Pie Chart</h3>
+            <canvas id="myChart"></canvas>
+        </div>
+
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+    const data = {
+        labels: [
+            {% for log in logs %}
+    '{{ log.command }}',
+        {% endfor %}
+        ],
+    datasets: [{
+        label: 'My First Dataset',
+        data: [
+            {% for log in logs %}
+                {{ log.level }},
+    {% endfor %}
+    ],
+        backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)'
+        ],
+            hoverOffset: 4
+    }]
+    };
+    const config = {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: false,
+
+        },
+    };
+    var myChart = new Chart(
+        document.getElementById('myChart').getContext('2d'),
+        config
+    );
+</script>
+{% endblock %}
+{% endblock %}
