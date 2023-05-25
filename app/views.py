@@ -109,17 +109,23 @@ def log_delete(id):
 
 @app.route("/log/create", methods=["POST"])
 def log_create():
+    data = request.json
+    timestamp_str = data.get('timestand')
+    timestamp_obj = datetime.strptime(timestamp_str, '%d/%b/%Y %H:%M:%S')
+
     log = Log(
-        command='ping 127.0.0.1',
-        ip_port='172.3.12.66:15812',
-        timestand=datetime.now(),
-        level=3,
-        source='Telnet',
+        command=data.get('command'),
+        ip_port=data.get('ip_port'),
+        timestand=timestamp_obj,
+        level=data.get('level'),
+        source=data.get('source'),
         user_viewable=True
     )
 
     db.session.add(log)
     db.session.commit()
+
+    return "OK"
 
 
 @app.route("/log/<int:id>/escale", methods=["POST"])
