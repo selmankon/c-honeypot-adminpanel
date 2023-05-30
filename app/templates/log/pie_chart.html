@@ -1,0 +1,66 @@
+{% block content %}
+
+<canvas id="pie-chart"></canvas>
+
+
+{% block javascript %}
+<script>
+
+    const logs_pie = [
+        {% for log in logs %}
+        {
+            ip_port: '{{ log.ip_port }}'
+        },
+        {% endfor %}
+    ];
+
+    const labels_pie = [
+        {% for log in logs %}
+        '{{ log.ip_port }}',
+        {% endfor %}
+    ];
+
+    const uniquePieLabels = Array.from(new Set(labels_pie));
+
+    const logCounts_pie = {};
+
+    // Her bir log değerinin sayısını hesaplayan döngü
+    for (let i = 0; i < logs_pie.length; i++) {
+        const log = logs_pie[i].ip_port;
+        if (logCounts_pie[log]) {
+            logCounts_pie[log]++;
+        } else {
+            logCounts_pie[log] = 1;
+        }
+    }
+
+    
+    const pie_data = {
+        labels: uniquePieLabels,
+        datasets: [{
+            label: 'Log sayısı',
+            data: Object.values(logCounts_pie),
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)'
+            ],
+        }]
+    };
+
+    const pie_config = {
+        type: 'pie',
+        data: pie_data,
+        options: {
+            responsive: false,
+        },
+    };
+    
+    var myChart = new Chart(
+        document.getElementById('pie-chart').getContext('2d'),
+        pie_config
+    );
+</script>
+
+{% endblock %}
+{% endblock %}

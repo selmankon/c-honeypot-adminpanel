@@ -9,7 +9,18 @@
   ettiniz.</span>
 {% endif %}
 
-{% include 'log/chart.html' %}
+<div class="container mb-4">
+  <div class="row">
+    <div class="col">
+      {% include 'log/pie_chart.html' %}
+    </div>
+    <div class="col">
+      {% include 'log/line_chart.html' %}
+    </div>
+  </div>
+</div>
+
+
 
 <table class="table table-bordered text-white">
   <thead>

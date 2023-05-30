@@ -94,7 +94,7 @@ def log_dashboard():
 @app.route("/log/history", methods=['GET'])
 @admin_required
 def log_history():
-    logs = db.session.query(Log).order_by(Log.timestand)
+    logs = db.session.query(Log).order_by(Log.timestand.desc())
     return render_template('log/history.html', logs=logs)
 
 

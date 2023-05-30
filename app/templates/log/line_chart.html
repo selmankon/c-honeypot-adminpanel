@@ -1,0 +1,79 @@
+{% block content %}
+
+<canvas id="line-chart" width="550px"></canvas>
+
+
+{% block javascript %}
+<script>
+    const logTimes = [
+        {% for log in logs %}
+        '{{ log.timestand }}',
+        {% endfor %}
+    ];
+
+    const logDates = logTimes.map(log => {
+        const date = new Date(log);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    });
+
+    const uniqueDates = Array.from(new Set(logDates)).sort((a, b) => new Date(a) - new Date(b));
+    console.log(uniqueDates);
+
+    const logCounts_linechart = {};
+
+    for (let i = 0; i < logTimes.length; i++) {
+        const log = logTimes[i].split(' ')[0];
+        if (logCounts_linechart[log]) {
+            logCounts_linechart[log]++;
+        } else {
+            logCounts_linechart[log] = 1;
+        }
+    }
+
+    const logCounts_linechartData = uniqueDates.map(date => logCounts_linechart[date]);
+
+    const lineData = {
+        labels: uniqueDates,
+        datasets: [
+            {
+                label: 'Log adeti',
+                data: logCounts_linechartData,
+                backgroundColor: [
+                    'rgb(54, 162, 235)'
+                ],
+                pointStyle: 'circle',
+                pointRadius: 10,
+                pointHoverRadius: 15
+            }
+        ]
+    };
+
+    const lineConfig = {
+        type: 'line',
+        data: lineData,
+        options: {
+            responsive: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    };
+
+    var myChart = new Chart(
+        document.getElementById('line-chart').getContext('2d'),
+        lineConfig
+    );
+</script>
+
+
+
+{% endblock %}
+{% endblock %}
