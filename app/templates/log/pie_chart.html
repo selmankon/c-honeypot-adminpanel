@@ -9,16 +9,20 @@
     const logs_pie = [
         {% for log in logs %}
         {
-            ip_port: '{{ log.ip_port }}'
+            ip_address: '{{ log.ip_port.split(':')[0]}}'
         },
         {% endfor %}
     ];
 
+    
     const labels_pie = [
         {% for log in logs %}
-        '{{ log.ip_port }}',
+        '{{ log.ip_port.split(':')[0]}}',
         {% endfor %}
     ];
+
+    console.log(logs_pie)
+    console.log(labels_pie)
 
     const uniquePieLabels = Array.from(new Set(labels_pie));
 
@@ -26,7 +30,7 @@
 
     // Her bir log değerinin sayısını hesaplayan döngü
     for (let i = 0; i < logs_pie.length; i++) {
-        const log = logs_pie[i].ip_port;
+        const log = logs_pie[i].ip_address;  // ip_port yerine ip_address kullanıldı.
         if (logCounts_pie[log]) {
             logCounts_pie[log]++;
         } else {
