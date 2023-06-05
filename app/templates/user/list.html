@@ -25,30 +25,35 @@
           <thead>
             <tr>
               <th scope="col" style="width: 5px;">ID</th>
-              <th scope="col" style="width: 60px;">Kullanıcı Adı</th>
-              <th scope="col" style="width: 60px;">Rol</th>
-              <th scope="col" style="width: 110px;">İşlem</th>
+              <th scope="col" style="width: 90px;">Kullanıcı Adı</th>
+              <th scope="col" style="width: 90px;">Rol</th>
+              <th scope="col" style="width: 5px;">İşlem</th>
             </tr>
           </thead>
           <tbody>
             {% for user in users %}
             <tr>
               <td>{{ user.id }}</td>
-              <td style="width: 60px;">{{ user.username }}</td>
-              <td style="width: 60px;">{{ user.role }}</td>
-              <td style="width: 110px;">
-                <div class="d-flex">
+              <td style="width: 90px;">{{ user.username }}</td>
+              <td style="width: 90px;">{{ user.role }}</td>
+              <td  style="width: 5px;">
+                <div class="float-center d-flex">
                   <form action="/user/{{ user.id }}/delete" method="post">
                     <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom"
                       title="Kullanıcıyı Sil">
                       <i class="fas fa-trash"></i>
                     </button>
                   </form>
-                  <form action="/user/{{ user.id }}/change_role" method="post">
-                    <button class="btn btn-success mr-2" data-toggle="tooltip" data-placement="bottom"
+                  <form action="/user/{{ user.id }}/change_role/down" method="post">
+                    <button {{ 'disabled' if user.role == 'L1' }}  class="btn btn-success mr-2" data-toggle="tooltip" data-placement="bottom"
                       title="Rolünü Değiştir">
-                      <i class="fas {{ 'fa-download' if user.role == 'admin'
-                        else 'fa-upload' if user.role == 'user' else '' }}"></i>
+                      <i  class="fas fa-download"></i>
+                    </button>
+                  </form>
+                  <form action="/user/{{ user.id }}/change_role/up" method="post">
+                    <button {{ 'disabled' if user.role == 'admin' }}  class="btn btn-success mr-2" data-toggle="tooltip" data-placement="bottom"
+                      title="Rolünü Değiştir">
+                      <i  class="fas fa-upload"></i>
                     </button>
                   </form>
                 </div>
@@ -80,7 +85,8 @@
           <div class="form-group">
             <label for="role">Rol</label>
             <select class="form-control text-white bg-transparent" id="role" name="role">
-              <option value="user">user</option>
+              <option value="L1">L1</option>
+              <option value="L2">L2</option>
               <option value="admin">admin</option>
             </select>
           </div>

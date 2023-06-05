@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card text-white border-light bg-dark">
+    <div class="card-header text-center">
+      <h5 class="text-center">
+        <i class="fa fa-user-plus"></i> Ticket Oluştur
+      </h5>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="/log/{{ log.id }}/create_ticket" class="needs-validation" novalidate>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+            <label for="username">ID</label>
+            <input type="text" class="form-control text-white bg-dark" id="id" name="id" value="{{ log.id }}" readonly >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="username">Erişen Bilgisi</label>
+                <input type="text" class="form-control text-white bg-dark" id="ip_port" name="ip_port" value="{{ log.ip_port }}" readonly >
+            </div>
+            <div class="form-group col-md-4">
+                <label for="username">Kaynak</label>
+                <input type="text" class="form-control text-white bg-dark" id="ip_port" name="ip_port" value="{{ log.source }}" readonly >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Komut</label>
+            <input type="text" class="form-control text-white bg-dark" id="command" name="command" value="{{ log.command }}" readonly >
+        </div>
+        <small id="log-help-block" class="form-text text-muted">
+            Logun riskine göre uygun log seviyesini seçiniz.
+        </small>
+        <div class="form-group">
+          <label for="level">Log Seviyesi</label>
+          <select class="form-control text-white bg-transparent" id="level" name="level">
+            <option value="1">✯</option>
+            <option value="2">✯✯</option>
+            <option value="3">✯✯✯</option>
+          </select>
+        </div>
+        
+        <small id="log-help-block" class="form-text text-muted">
+            Logun riskine göre açıklama giriniz.
+        </small>
+        <div class="form-group">
+            <label for="desc">Açıklama</label>
+            <textarea class="form-control text-white bg-dark" rows="5" id="desc" name="desc"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Oluştur</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -22,9 +22,9 @@
       <div class="col">
         <div class="card text-white border-light bg-dark">
           <div class="card-body">
-            <h5 class="card-header border-light mb-4"><i class="fa fa-history"></i> Log Geçmişi</h5>
-            <p class="card-text">Toplam Log Sayısı: {{total_log_count}} </p>
-            <a href="/log/history" class="btn btn-primary">Görüntüle</a>
+            <h5 class="card-header border-light mb-4"><i class="fa fa-ticket-alt"></i> Ticketlar </h5>
+            <p class="card-text">Mevcut Ticket Sayısı: {{total_ticket_count}} </p>
+            <a href="/tickets" class="btn btn-primary">Görüntüle</a>
           </div>
         </div>
       </div>
@@ -32,9 +32,11 @@
       <div class="col">
         <div class="card text-white border-light bg-dark">
           <div class="card-body">
-            <h5 class="card-header border-light mb-4"><i class="fas fa-search"></i> Log Paneli</h5>
-            <p class="card-text">Bekleyen Log Sayısı: {{current_log_count}}</p>
-            <a href="/log/dashboard" class="btn btn-primary">Görüntüle</a>
+            <h5 class="card-header border-light mb-4"><i class="fas fa-search"></i> Log Panelleri</h5>
+            <p class="card-text">Toplam Log Sayısı: {{total_log_count}}</p>
+            <a href="/dashboard/L1" class="btn btn-primary">L1</a>
+            <a href="/dashboard/L2" class="btn btn-primary">L2 </a>
+            <a href="/dashboard/admin" class="btn btn-primary">Tümü</a>
           </div>
         </div>
       </div>

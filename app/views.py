@@ -23,6 +23,22 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+def l1_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if session.get('role') == 'admin' or session.get('role') == 'L1':
+            return func(*args, **kwargs)
+        abort(403)
+    return decorated_view
+
+
+def l2_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if session.get('role') == 'admin' or session.get('role') == 'L2':
+            return func(*args, **kwargs)
+        abort(403)
+    return decorated_view
 
 def login_required(func):
     @wraps(func)
@@ -37,11 +53,10 @@ def login_required(func):
 
 
 @app.route("/")
+@login_required
 def Defination():
-    if 'username' in session:
-        return redirect("/dashboard")
-    return redirect("/login")
-
+    return redirect("/dashboard")
+    
 
 @app.route("/login", methods=['GET'])
 def Login():
@@ -62,12 +77,15 @@ def Login():
 @login_required
 def dashboard():
     role = session['role']
+    if role != "admin":
+        return redirect(f"/dashboard/{role}")
+
     users_count = db.session.query(User).count()
     total_log_count = db.session.query(Log).count()
-    current_log_count = db.session.query(Log).filter(
-        Log.user_viewable == True).count()
+    total_ticket_count = db.session.query(Log).filter(
+        Log.ticketCreated == True).count()
 
-    return render_template('dashboard.html', role=role, users_count=users_count, total_log_count=total_log_count, current_log_count=current_log_count)
+    return render_template('dashboard.html', role=role, users_count=users_count, total_log_count=total_log_count, total_ticket_count=total_ticket_count)
 
 
 # ------------ Log Management ------------ #
@@ -80,31 +98,51 @@ class Log(db.Model):
     timestand = db.Column(db.DateTime, nullable=False)
     level = db.Column(db.Integer, nullable=False)
     source = db.Column(db.String, nullable=False)
-    user_viewable = db.Column(db.Boolean, nullable=False)
+    deleted = db.Column(db.Boolean, nullable=False)
+    escalated = db.Column(db.Boolean, nullable=False)
+    ticketCreated = db.Column(db.Boolean, nullable=False)
+    description = db.Column(db.String, nullable=True)
 
 
-@app.route("/log/dashboard", methods=['GET'])
+@app.route("/dashboard/<string:role>", methods=['GET'])
 @login_required
-def log_dashboard():
-    logs = db.session.query(Log).filter(
-        Log.user_viewable == True).order_by(Log.timestand)
-    return render_template('log/dashboard.html', logs=logs)
+def log_dashboard(role):
+    if role == "L1" and (session.get('role') == 'L1' or session.get('role') == 'admin'):
+        logs = db.session.query(Log).filter(
+        Log.escalated == False).filter(Log.deleted == False).order_by(Log.timestand.desc())
+        return render_template('log/logs.html', logs=logs)
 
+    elif role == "L2" and (session.get('role') == 'L2' or session.get('role') == 'admin'):
+        logs = db.session.query(Log).filter(
+            Log.escalated == True).filter(Log.deleted == False).filter(Log.escalated==True).filter(Log.ticketCreated==False).order_by(Log.timestand.desc())
+        return render_template('log/logs.html', logs=logs)
+        
+    elif role == "admin" and session.get('role') == 'admin':
+        logs = db.session.query(Log).order_by(Log.timestand.desc())
+        return render_template('log/logs.html', logs=logs)
 
-@app.route("/log/history", methods=['GET'])
-@admin_required
-def log_history():
-    logs = db.session.query(Log).order_by(Log.timestand.desc())
-    return render_template('log/history.html', logs=logs)
+    else:
+        abort(403)
 
 
 @app.route("/log/<int:id>/delete", methods=["POST"])
-@admin_required
+@login_required
 def log_delete(id):
+    try:
+        referrer_path = request.referrer.split("?")[0]
+    except:
+        referrer_path = request.referrer
+
     log = db.get_or_404(Log, id)
-    db.session.delete(log)
+    log.deleted = True
     db.session.commit()
-    return redirect("/log/history?delete=true")
+
+    if session.get('role') == 'admin' and "/tickets" in referrer_path:
+        db.session.delete(log)
+        db.session.commit()
+        return redirect(f"/tickets?delete=true")
+    
+    return redirect(f"{referrer_path}?delete=true")
 
 
 @app.route("/log/create", methods=["POST"])
@@ -119,7 +157,9 @@ def log_create():
         timestand=timestamp_obj,
         level=data.get('level'),
         source=data.get('source'),
-        user_viewable=True
+        deleted=False,
+        escalated=False,
+        ticketCreated=False
     )
 
     db.session.add(log)
@@ -129,22 +169,56 @@ def log_create():
 
 
 @app.route("/log/<int:id>/escale", methods=["POST"])
+@l1_required
 @login_required
 def log_escale(id):
     log = db.get_or_404(Log, id)
-
-    if log.user_viewable == True:
-        log.user_viewable = False
-    elif log.user_viewable == False and session['role'] == 'admin':
-        log.user_viewable = True
-    else:
-        abort(403)
-
+    log.escalated = True
     db.session.commit()
-    if "dashboard" in request.referrer:
-        return redirect("/log/dashboard?escale=true")
-    elif "history" in request.referrer:
-        return redirect("/log/history?unescale=true")
+    return redirect("/dashboard/L1?escale=true")
+
+
+@app.route("/log/<int:id>/unescale", methods=["POST"])
+@l2_required
+@login_required
+def log_unescale(id):
+    log = db.get_or_404(Log, id)
+    log.escalated = False
+    db.session.commit()
+    return redirect("/dashboard/L2?unescale=true")
+
+
+@app.route("/log/<int:id>/create_ticket", methods=["GET","POST"])
+@l2_required
+@login_required
+def create_ticket(id):
+    if request.method == "GET":
+        log = db.get_or_404(Log, id)
+        return render_template('log/create_ticket.html', log=log)
+    
+    if request.method == "POST":
+        log = db.get_or_404(Log, id)
+        log.ticketCreated = True
+        log.level = int(request.form["level"])
+        log.description = request.form["desc"]
+        db.session.commit()
+        return redirect("/dashboard/L2?create_ticket=true")
+
+@app.route("/log/<int:id>/get_ticket", methods=["POST"])
+@admin_required
+@login_required
+def get_ticket(id):
+    log = db.get_or_404(Log, id)
+
+    return redirect("/dashboard/L2?create_ticket=true")
+
+@app.route("/tickets", methods=["GET","POST"])
+@admin_required
+@login_required
+def ticket_list():
+    logs = db.session.query(Log).filter(Log.ticketCreated == True).order_by(Log.timestand.desc())
+    return render_template('log/ticket_list.html', logs=logs)
+
 
 # --------- Session Management --------- #
 
@@ -230,11 +304,22 @@ def change_password():
     return redirect("/settings?success=true")
 
 
-@app.route("/user/<int:id>/change_role", methods=["POST"])
+@app.route("/user/<int:id>/change_role/<string:direction>", methods=["POST"])
 @admin_required
-def change_role(id):
+def change_role(id, direction):
     user = db.get_or_404(User, id)
-    user.role = "admin" if user.role == "user" else "user"
+    if direction == "up":
+        if user.role == "L1":
+            user.role = "L2"
+        elif user.role == "L2":
+            user.role = "admin"
+
+    if direction == "down":
+        if user.role == "admin":
+            user.role = "L2"
+        elif user.role == "L2":
+            user.role = "L1"
+    
     db.session.commit()
     return redirect("/users?changerole=true")
 
@@ -242,5 +327,5 @@ def change_role(id):
 @app.route("/users", methods=['GET'])
 @admin_required
 def users():
-    users = db.session.execute(db.select(User).order_by(User.role)).scalars()
+    users = db.session.execute(db.select(User).order_by(User.id.desc())).scalars()
     return render_template('user/list.html', users=users)

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if request.args.get("delete") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Log'u başarıyla sildiniz.</span>
+{% endif %}
+
+<table class="table table-bordered text-white">
+   <thead>
+    <tr>
+      <th scope="col" style="width:8px;">ID</th>
+      <th scope="col" style="max-width:150px;">Komut</th>
+      <th scope="col" style="width:30px;">Log Seviyesi</th>
+      <th scope="col" style="width:5px;">İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.id }}</td>
+      <td>{{ log.command }}</td>
+      <td><b>{% for i in range(log.level) %}✯{% endfor %}</b></td>
+      <td>
+        
+        <div class="d-flex">
+           
+              <button class="btn btn-warning text-light mr-2" data-toggle="modal" data-target="#modal{{log.id}}" data-placement="bottom" title="Ticketi İncele">
+                <i class="fas fa-eye"></i>
+              </button>
+
+            <form action="/log/{{ log.id }}/delete" method="post">
+                <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom" title="Sil">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+        </div>
+      </td>
+    </tr>
+    <div class="modal fade" id="modal{{log.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content  bg-dark">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Ticket Bilgileri</h5>
+              <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                        <label for="username">ID</label>
+                        <input type="text" class="form-control text-white bg-dark" id="id" name="id" value="{{ log.id }}" readonly >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="username">Erişen Bilgisi</label>
+                            <input type="text" class="form-control text-white bg-dark" id="ip_port" name="ip_port" value="{{ log.ip_port }}" readonly >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="username">Kaynak</label>
+                            <input type="text" class="form-control text-white bg-dark" id="ip_port" name="ip_port" value="{{ log.source }}" readonly >
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="level">Log Seviyesi</label>
+                        <input type="text" class="form-control text-white bg-dark" id="level" name="level" value="{% for i in range(log.level) %}✯{% endfor %}" readonly >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="command">Komut</label>
+                        <textarea class="form-control text-white bg-dark" rows="3" id="desc" name="desc" readonly>{{log.command}}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="desc">Açıklama</label>
+                        <textarea class="form-control text-white bg-dark" rows="5" id="desc" name="desc" readonly>{{log.description}}</textarea>
+                    </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

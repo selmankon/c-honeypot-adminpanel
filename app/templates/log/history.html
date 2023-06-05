@@ -8,6 +8,9 @@
 <span id="error-message" class="alert alert-success" role="alert" style="display:block">Log'u başarıyla unescale
   ettiniz.</span>
 {% endif %}
+{% if request.args.get("create_ticket") == "true" %}
+<span id="error-message" class="alert alert-success" role="alert" style="display:block">Başarıyla ticket oluşturdunuz.</span>
+{% endif %}
 
 <div class="container mb-4">
   <div class="row">
@@ -44,24 +47,23 @@
       <td><b>{% for i in range(log.level) %}✯{% endfor %}</b></td>
       <td>{{ log.source }}</td>
       <td>
-
         <div class="d-flex">
-          {% if log.user_viewable == False %}
-          <form action="/log/{{ log.id }}/escale" method="post">
+
+          <form action="/log/history/{{ log.id }}/create_ticket" method="GET">
+            <button class="btn btn-warning text-light mr-2" title="Ticket Oluştur">
+              <i class="fas fa-plus"></i>
+            </button>
+          </form>
+
+          <form action="/log/history/{{ log.id }}/escale" method="post">
             <button class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="bottom"
-              title="Log'u Bekleyenlere Geri Taşı">
+              title="L1'a Geri Taşı">
               <i class="fas fa-eye"></i>
             </button>
           </form>
-          {% else %}
-          <button class="btn btn-primary mr-2" data-toggle="tooltip" disabled data-placement="bottom"
-            title="Log'u Bekleyenlere Geri Taşı">
-            <i class="fas fa-eye"></i>
-          </button>
-          {% endif %}
 
-          <form action="/log/{{ log.id }}/delete" method="post">
-            <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom" title="Log'u Sil">
+          <form action="/log/history/{{ log.id }}/delete" method="post">
+            <button class="btn btn-danger mr-2" data-toggle="tooltip" data-placement="bottom" title="Sil">
               <i class="fas fa-trash"></i>
             </button>
           </form>
