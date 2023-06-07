@@ -1,4 +1,3 @@
-# caveman honeypot admin panel
 still under development
 
 default accounts:
