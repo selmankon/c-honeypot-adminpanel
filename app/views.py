@@ -329,3 +329,7 @@ def change_role(id, direction):
 def users():
     users = db.session.execute(db.select(User).order_by(User.id.desc())).scalars()
     return render_template('user/list.html', users=users)
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
